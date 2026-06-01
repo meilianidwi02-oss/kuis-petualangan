@@ -1,0 +1,2716 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>Petualangan Hutan Indonesia — Bahasa Indonesia Kelas 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --jungle-dark: #1a2e1a;
+  --jungle-deep: #0f1f0f;
+  --jungle-green: #2d5a27;
+  --jungle-mid: #3d7a35;
+  --jungle-light: #5a9e50;
+  --jungle-bright: #7bc96a;
+  --leaf: #a8e063;
+  --gold: #f5c842;
+  --amber: #e8a020;
+  --fire: #ff6b35;
+  --water: #4ecdc4;
+  --sky: #45b7d1;
+  --danger: #e74c3c;
+  --hp-red: #ff4757;
+  --parchment: #fdf6e3;
+  --text-light: #e8f5e0;
+  --text-muted: #a8c89a;
+  --shadow-deep: rgba(0,0,0,0.6);
+  --glow-green: rgba(123,201,106,0.4);
+  --glow-gold: rgba(245,200,66,0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--jungle-deep);
+  color: var(--text-light);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Animated jungle background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(45,90,39,0.3) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(61,122,53,0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(15,31,15,0.8) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Floating leaves */
+.leaf-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.leaf-bg span {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.08;
+  animation: floatLeaf linear infinite;
+}
+@keyframes floatLeaf {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.08; }
+  90% { opacity: 0.08; }
+  100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+}
+
+.screen {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px;
+}
+.screen.active { display: flex; }
+
+/* ===== HEADER ===== */
+.game-header {
+  text-align: center;
+  padding: 24px 16px 16px;
+  width: 100%;
+}
+.game-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.2rem, 4vw, 2rem);
+  color: var(--leaf);
+  text-shadow: 0 0 20px var(--glow-green), 0 2px 4px black;
+  letter-spacing: 1px;
+  line-height: 1.3;
+}
+.game-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ===== CARD ===== */
+.card {
+  background: rgba(26,46,26,0.85);
+  border: 1px solid rgba(123,201,106,0.25);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px var(--shadow-deep), inset 0 1px 0 rgba(255,255,255,0.05);
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 50px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--jungle-mid), var(--jungle-bright));
+  color: var(--jungle-deep);
+  box-shadow: 0 4px 15px rgba(90,158,80,0.4);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(90,158,80,0.6); }
+.btn-gold {
+  background: linear-gradient(135deg, var(--amber), var(--gold));
+  color: var(--jungle-deep);
+  box-shadow: 0 4px 15px rgba(245,200,66,0.4);
+}
+.btn-gold:hover { transform: translateY(-2px); }
+.btn-danger {
+  background: linear-gradient(135deg, #c0392b, var(--danger));
+  color: white;
+}
+.btn-secondary {
+  background: rgba(255,255,255,0.1);
+  color: var(--text-light);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.btn-sm { padding: 8px 16px; font-size: 0.85rem; }
+.btn-full { width: 100%; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+/* ===== ROLE SELECTOR ===== */
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  max-width: 500px;
+}
+.role-card {
+  background: rgba(26,46,26,0.85);
+  border: 2px solid rgba(123,201,106,0.2);
+  border-radius: 16px;
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+}
+.role-card:hover {
+  border-color: var(--jungle-bright);
+  background: rgba(61,122,53,0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(123,201,106,0.2);
+}
+.role-icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+.role-name { font-family: 'Cinzel Decorative', serif; font-size: 0.9rem; color: var(--gold); }
+.role-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; }
+
+/* ===== SETUP TABS ===== */
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 50px;
+  padding: 4px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+.tab-btn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 50px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.tab-btn.active {
+  background: var(--jungle-mid);
+  color: var(--text-light);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.form-input {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(123,201,106,0.25);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text-light);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+.form-input:focus {
+  outline: none;
+  border-color: var(--jungle-bright);
+  box-shadow: 0 0 0 3px rgba(123,201,106,0.15);
+}
+textarea.form-input { min-height: 80px; resize: vertical; }
+
+.counter-control {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.counter-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--jungle-bright);
+  background: transparent;
+  color: var(--jungle-bright);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.counter-btn:hover { background: var(--jungle-bright); color: var(--jungle-deep); }
+.counter-value {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.5rem;
+  color: var(--gold);
+  min-width: 40px;
+  text-align: center;
+}
+
+/* ===== SOAL LIST ===== */
+.soal-item {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(123,201,106,0.15);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.soal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.soal-num {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 50px;
+  text-transform: uppercase;
+}
+.badge-pg { background: rgba(78,205,196,0.2); color: var(--water); border: 1px solid var(--water); }
+.badge-essay { background: rgba(232,160,32,0.2); color: var(--amber); border: 1px solid var(--amber); }
+
+.pilihan-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+.pilihan-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pilihan-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; min-width: 16px; }
+
+.soal-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.progress-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 50px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--jungle-mid), var(--leaf));
+  border-radius: 50px;
+  transition: width 0.3s;
+}
+.progress-text { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; white-space: nowrap; }
+
+/* ===== PIN MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.active { display: flex; }
+.modal-box {
+  background: var(--jungle-dark);
+  border: 1px solid rgba(123,201,106,0.3);
+  border-radius: 20px;
+  padding: 32px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+}
+.modal-title { font-family: 'Cinzel Decorative', serif; color: var(--gold); font-size: 1.1rem; margin-bottom: 20px; }
+.pin-dots { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; }
+.pin-dot {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--jungle-bright);
+  background: transparent;
+  transition: background 0.2s;
+}
+.pin-dot.filled { background: var(--leaf); border-color: var(--leaf); }
+.pin-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.pin-key {
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid rgba(123,201,106,0.3);
+  background: rgba(0,0,0,0.3);
+  color: var(--text-light);
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pin-key:hover { background: rgba(123,201,106,0.2); border-color: var(--jungle-bright); }
+.pin-key:active { transform: scale(0.95); }
+.pin-error { color: var(--hp-red); font-size: 0.85rem; margin-bottom: 12px; min-height: 20px; }
+
+/* ===== QR / SHARE ===== */
+.qr-wrap {
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  display: inline-block;
+  margin: 12px auto;
+}
+#qrcode canvas, #qrcode img { display: block; }
+.share-link {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(123,201,106,0.2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  word-break: break-all;
+  margin: 8px 0;
+  font-family: monospace;
+}
+
+/* ===== GAME BOARD ===== */
+.game-container {
+  width: 100%;
+  max-width: 700px;
+}
+
+/* Pos / Map Trail */
+.trail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.round-badge {
+  background: rgba(245,200,66,0.15);
+  border: 1px solid var(--gold);
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--gold);
+}
+
+.map-trail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 16px;
+  border: 1px solid rgba(123,201,106,0.15);
+}
+.trail-pos {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border: 2px solid rgba(123,201,106,0.2);
+  background: rgba(0,0,0,0.3);
+  color: var(--text-muted);
+  position: relative;
+  transition: all 0.3s;
+  cursor: default;
+}
+.trail-pos.current {
+  border-color: var(--gold);
+  background: rgba(245,200,66,0.15);
+  color: var(--gold);
+  box-shadow: 0 0 12px rgba(245,200,66,0.4);
+}
+.trail-pos.passed {
+  border-color: var(--jungle-bright);
+  background: rgba(123,201,106,0.15);
+  color: var(--jungle-bright);
+}
+.trail-pos.finish {
+  border-color: var(--fire);
+  background: rgba(255,107,53,0.15);
+  color: var(--fire);
+  font-size: 1.1rem;
+}
+.trail-pos .pos-icon {
+  position: absolute;
+  top: -8px; right: -8px;
+  font-size: 0.9rem;
+  filter: drop-shadow(0 1px 2px black);
+}
+
+/* Kelompok cards */
+.kelompok-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.kelompok-card {
+  background: rgba(0,0,0,0.3);
+  border: 2px solid rgba(123,201,106,0.2);
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.kelompok-card.answered {
+  border-color: var(--jungle-bright);
+  background: rgba(123,201,106,0.1);
+}
+.kelompok-card.correct {
+  border-color: var(--leaf);
+  background: rgba(168,224,99,0.1);
+  box-shadow: 0 0 15px rgba(168,224,99,0.25);
+}
+.kelompok-card.wrong {
+  border-color: var(--hp-red);
+  background: rgba(255,71,87,0.1);
+}
+.kelompok-card.eliminated {
+  opacity: 0.5;
+  border-color: rgba(255,71,87,0.3);
+  filter: grayscale(0.5);
+}
+.k-name { font-weight: 800; font-size: 0.9rem; margin-bottom: 6px; }
+.k-pos {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.hp-display { display: flex; gap: 3px; justify-content: center; }
+.hp-heart { font-size: 1rem; transition: all 0.3s; }
+.hp-heart.lost { filter: grayscale(1); opacity: 0.3; }
+.k-status {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 4px;
+  min-height: 18px;
+}
+.k-color-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 14px 14px 0 0;
+}
+
+/* ===== SOAL GAME SCREEN ===== */
+.soal-game-card {
+  background: rgba(15,31,15,0.95);
+  border: 2px solid rgba(123,201,106,0.3);
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+}
+.soal-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.soal-type-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.timer-ring {
+  position: relative;
+  width: 60px; height: 60px;
+}
+.timer-ring svg {
+  transform: rotate(-90deg);
+}
+.timer-ring circle {
+  fill: none;
+  stroke-width: 5;
+}
+.timer-circle-bg { stroke: rgba(255,255,255,0.1); }
+.timer-circle-fg { stroke: var(--jungle-bright); transition: stroke-dashoffset 1s linear, stroke 0.5s; }
+.timer-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1rem;
+  color: var(--text-light);
+  font-weight: 700;
+}
+
+.soal-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-light);
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 12px;
+  border-left: 3px solid var(--jungle-bright);
+}
+
+.pilihan-game {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.pilihan-btn {
+  padding: 14px 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(123,201,106,0.25);
+  background: rgba(0,0,0,0.3);
+  color: var(--text-light);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pilihan-btn:hover {
+  border-color: var(--jungle-bright);
+  background: rgba(123,201,106,0.15);
+  transform: translateY(-2px);
+}
+.pilihan-btn.selected {
+  border-color: var(--gold);
+  background: rgba(245,200,66,0.15);
+  color: var(--gold);
+}
+.pilihan-btn.correct-ans {
+  border-color: var(--leaf);
+  background: rgba(168,224,99,0.2);
+  color: var(--leaf);
+}
+.pilihan-btn.wrong-ans {
+  border-color: var(--hp-red);
+  background: rgba(255,71,87,0.15);
+  color: var(--hp-red);
+}
+.pilihan-letter {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* Essay answer area */
+.answer-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.answer-chip {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(123,201,106,0.2);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.answer-chip.submitted { border-color: var(--jungle-bright); background: rgba(123,201,106,0.1); }
+
+/* Essay grading */
+.essay-grade-item {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(123,201,106,0.15);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.essay-answer-text {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin: 8px 0;
+  padding: 10px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+  font-style: italic;
+}
+.grade-btns { display: flex; gap: 8px; }
+
+/* ===== HASIL RONDE ===== */
+.hasil-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.hasil-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 12px;
+  border-left: 4px solid transparent;
+}
+.hasil-row.benar { border-color: var(--leaf); }
+.hasil-row.salah { border-color: var(--hp-red); }
+.hasil-name { font-weight: 800; }
+.hasil-result {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* ===== LEADERBOARD ===== */
+.leaderboard {
+  width: 100%;
+  max-width: 500px;
+}
+.lb-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 14px;
+  margin-bottom: 8px;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+}
+.lb-item.rank-1 { border-color: var(--gold); background: rgba(245,200,66,0.1); }
+.lb-item.rank-2 { border-color: #c0c0c0; background: rgba(192,192,192,0.05); }
+.lb-item.rank-3 { border-color: #cd7f32; background: rgba(205,127,50,0.05); }
+.lb-rank {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.2rem;
+  min-width: 32px;
+  text-align: center;
+}
+.lb-info { flex: 1; }
+.lb-name { font-weight: 800; font-size: 1rem; }
+.lb-detail { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+.lb-pos {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1rem;
+  color: var(--gold);
+}
+
+/* ===== STUDENT VIEW ===== */
+.student-header {
+  text-align: center;
+  padding: 20px 16px 12px;
+  width: 100%;
+}
+.waiting-anim {
+  font-size: 3rem;
+  margin: 20px 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+.my-status-card {
+  background: rgba(26,46,26,0.9);
+  border: 2px solid var(--jungle-bright);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 16px;
+}
+.my-hp { display: flex; gap: 6px; justify-content: center; margin: 8px 0; font-size: 1.5rem; }
+.my-pos-text {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.3rem;
+  color: var(--gold);
+}
+
+/* Feedback screens */
+.result-screen {
+  text-align: center;
+  padding: 40px 20px;
+}
+.result-icon { font-size: 5rem; margin-bottom: 16px; animation: bounceIn 0.5s; }
+@keyframes bounceIn {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.result-title { font-family: 'Cinzel Decorative', serif; font-size: 1.8rem; margin-bottom: 8px; }
+.result-desc { font-size: 1rem; color: var(--text-muted); }
+
+/* ===== WINNER SCREEN ===== */
+.firework-wrap {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  overflow: hidden;
+}
+.firework {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  animation: firework 1.5s ease-out forwards;
+}
+@keyframes firework {
+  0% { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+.winner-podium {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  justify-content: center;
+  margin: 24px 0;
+}
+.podium-col { text-align: center; }
+.podium-block {
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 12px 8px;
+  min-width: 80px;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+.podium-1 { height: 120px; background: linear-gradient(180deg, rgba(245,200,66,0.3), rgba(245,200,66,0.1)); border: 2px solid var(--gold); color: var(--gold); }
+.podium-2 { height: 90px; background: linear-gradient(180deg, rgba(192,192,192,0.2), rgba(192,192,192,0.05)); border: 2px solid #c0c0c0; color: #c0c0c0; }
+.podium-3 { height: 70px; background: linear-gradient(180deg, rgba(205,127,50,0.2), rgba(205,127,50,0.05)); border: 2px solid #cd7f32; color: #cd7f32; }
+.podium-rank { font-size: 1.5rem; margin-bottom: 4px; }
+.podium-name { font-size: 0.75rem; word-break: break-word; }
+
+/* ===== GROUP SELECTOR ===== */
+.group-select-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 500px;
+}
+.group-select-btn {
+  padding: 20px 12px;
+  border-radius: 14px;
+  border: 2px solid rgba(123,201,106,0.25);
+  background: rgba(26,46,26,0.85);
+  color: var(--text-light);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.group-select-btn:hover {
+  border-color: var(--jungle-bright);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(123,201,106,0.2);
+}
+.group-select-btn .g-icon { font-size: 2rem; }
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: rgba(123,201,106,0.15);
+  margin: 16px 0;
+}
+
+/* Info note */
+.info-note {
+  background: rgba(78,205,196,0.1);
+  border: 1px solid rgba(78,205,196,0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: var(--water);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Scroll */
+.scroll-area { overflow-y: auto; max-height: 60vh; padding-right: 4px; }
+.scroll-area::-webkit-scrollbar { width: 4px; }
+.scroll-area::-webkit-scrollbar-track { background: transparent; }
+.scroll-area::-webkit-scrollbar-thumb { background: rgba(123,201,106,0.3); border-radius: 2px; }
+
+@keyframes musicNoteAnim {
+  0% { transform: scale(1) rotate(-10deg); opacity: 0.7; }
+  100% { transform: scale(1.3) rotate(10deg); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .pilihan-game { grid-template-columns: 1fr; }
+  .kelompok-grid { grid-template-columns: repeat(2, 1fr); }
+  .pilihan-grid { grid-template-columns: 1fr; }
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--jungle-dark);
+  border: 1px solid rgba(123,201,106,0.4);
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  z-index: 200;
+  transition: transform 0.3s;
+  max-width: 90vw;
+  text-align: center;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Emoji avatars for groups */
+.group-icons { display: none; }
+</style>
+</head>
+<body>
+
+<!-- Floating leaves background -->
+<div class="leaf-bg" id="leafBg"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- PIN Modal -->
+<div class="modal-overlay" id="pinModal">
+  <div class="modal-box">
+    <div class="modal-title">🔐 Masuk Mode Guru</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-error" id="pinError"></div>
+    <div class="pin-keypad" id="pinKeypad">
+      <button class="pin-key" onclick="pinInput('1')">1</button>
+      <button class="pin-key" onclick="pinInput('2')">2</button>
+      <button class="pin-key" onclick="pinInput('3')">3</button>
+      <button class="pin-key" onclick="pinInput('4')">4</button>
+      <button class="pin-key" onclick="pinInput('5')">5</button>
+      <button class="pin-key" onclick="pinInput('6')">6</button>
+      <button class="pin-key" onclick="pinInput('7')">7</button>
+      <button class="pin-key" onclick="pinInput('8')">8</button>
+      <button class="pin-key" onclick="pinInput('9')">9</button>
+      <button class="pin-key" onclick="pinClear()">⌫</button>
+      <button class="pin-key" onclick="pinInput('0')">0</button>
+      <button class="pin-key btn-secondary" onclick="closePinModal()">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SCREEN: HOME ==================== -->
+<div class="screen active" id="screenHome">
+  <div class="game-header">
+    <div style="font-size:3.5rem;margin-bottom:8px">🌴</div>
+    <div class="game-title">Petualangan<br>Hutan Indonesia</div>
+    <div class="game-subtitle">Bahasa Indonesia · Kelas 7</div>
+  </div>
+  <div style="text-align:center;color:var(--text-muted);font-size:0.9rem;margin-bottom:24px;max-width:340px;">
+    Jelajahi hutan Kalimantan dan jawab soal untuk maju!<br>
+    Setiap kelompok punya 3 ❤️ — habis nyawa, gugur!
+  </div>
+  <div class="role-grid">
+    <div class="role-card" onclick="showPinModal()">
+      <span class="role-icon">👩‍🏫</span>
+      <div class="role-name">Guru</div>
+      <div class="role-desc">Setup soal & kendalikan game</div>
+    </div>
+    <div class="role-card" onclick="enterStudentMode()">
+      <span class="role-icon">🎒</span>
+      <div class="role-name">Siswa</div>
+      <div class="role-desc">Pilih kelompok & jawab soal</div>
+    </div>
+  </div>
+  <div style="margin-top:16px;text-align:center;background:rgba(78,205,196,0.1);border:1px solid rgba(78,205,196,0.3);border-radius:12px;padding:10px 16px;max-width:340px;">
+    <div style="font-size:0.75rem;color:var(--water);font-weight:700;margin-bottom:4px;">🔗 ROOM AKTIF</div>
+    <div id="homeRoomId" style="font-size:0.8rem;color:var(--text-light);font-family:monospace;word-break:break-all;">—</div>
+    <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">Siswa buka link ini dari HP masing-masing</div>
+  </div>
+  <div style="margin-top:12px;text-align:center;font-size:0.75rem;color:var(--text-muted);">
+    🌿 Murni skill-based · Tidak ada unsur keberuntungan
+  </div>
+</div>
+
+<!-- ==================== SCREEN: GURU SETUP ==================== -->
+<div class="screen" id="screenSetup">
+  <div class="game-header">
+    <div class="game-title" style="font-size:1.2rem">👩‍🏫 Setup Permainan</div>
+  </div>
+  
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tab1btn" onclick="switchTab(1)">1. Kelompok</button>
+    <button class="tab-btn" id="tab2btn" onclick="switchTab(2)">2. Soal</button>
+    <button class="tab-btn" id="tab3btn" onclick="switchTab(3)">3. Share</button>
+  </div>
+
+  <!-- Tab 1: Kelompok -->
+  <div id="tab1" style="width:100%;max-width:500px;">
+    <div class="card">
+      <div class="card-title">🌿 Jumlah Kelompok</div>
+      <div class="counter-control">
+        <button class="counter-btn" onclick="changeKelompok(-1)">−</button>
+        <div class="counter-value" id="kelompokCount">5</div>
+        <button class="counter-btn" onclick="changeKelompok(1)">+</button>
+        <span style="color:var(--text-muted);font-size:0.8rem">(3–8 kelompok)</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🦁 Nama Kelompok</div>
+      <div id="kelompokNames"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">❤️ HP Awal per Kelompok</div>
+      <div class="counter-control">
+        <button class="counter-btn" onclick="changeHP(-1)">−</button>
+        <div class="counter-value" id="hpCount">5</div>
+        <button class="counter-btn" onclick="changeHP(1)">+</button>
+        <span style="color:var(--text-muted);font-size:0.8rem">(1–5 HP)</span>
+      </div>
+      <div class="info-note" style="margin-top:12px">
+        ℹ️ HP habis → kelompok gugur. Kelompok terakhir tersisa atau yang paling jauh di akhir ronde menang.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🗺️ Jumlah Pos (Target)</div>
+      <div class="counter-control">
+        <button class="counter-btn" onclick="changePosCount(-1)">−</button>
+        <div class="counter-value" id="posCount">20</div>
+        <button class="counter-btn" onclick="changePosCount(1)">+</button>
+        <span style="color:var(--text-muted);font-size:0.8rem">(10–30 pos)</span>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="switchTab(2)">Lanjut → Input Soal 📝</button>
+  </div>
+
+  <!-- Tab 2: Soal -->
+  <div id="tab2" style="display:none;width:100%;max-width:500px;">
+    <div class="card">
+      <div class="card-title">📝 Soal (20 PG + 5 Essay = 25 Soal)</div>
+      <div class="soal-progress">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="soalProgressBar" style="width:0%"></div>
+        </div>
+        <div class="progress-text" id="soalProgressText">0/25 soal diisi</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="btn btn-sm btn-secondary" onclick="showSoalType('pg')">📝 PG (20)</button>
+        <button class="btn btn-sm btn-secondary" onclick="showSoalType('essay')">✍️ Essay (5)</button>
+        <button class="btn btn-sm btn-secondary" onclick="loadContohSoal()">✨ Contoh</button>
+      </div>
+      <div class="scroll-area" id="soalList"></div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="switchTab(3)">Lanjut → Share 📱</button>
+  </div>
+
+  <!-- Tab 3: Share -->
+  <div id="tab3" style="display:none;width:100%;max-width:500px;">
+    <div class="card">
+      <div class="card-title">📋 Aturan Petualangan</div>
+      <div style="font-size:0.88rem;line-height:1.7;color:var(--text-light);">
+        ✅ <strong>Jawab Benar</strong> = maju 1 pos di jalur petualangan<br>
+        ⚡ <strong>Tercepat benar</strong> = bonus maju 1 pos ekstra<br>
+        💔 <strong>Salah / Timeout</strong> = kehilangan 1 HP<br>
+        ☠️ <strong>HP habis</strong> = kelompok gugur dari permainan<br>
+        🏆 <strong>Menang</strong> = pertama sampai pos finish, atau posisi terjauh saat semua soal habis
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📱 Bagikan ke Siswa</div>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;">Siswa scan QR atau buka link → pilih kelompok → tunggu soal dari guru.</p>
+      <div style="text-align:center;">
+        <div class="qr-wrap"><div id="qrcode"></div></div>
+        <div class="share-link" id="shareLink">—</div>
+        <button class="btn btn-secondary btn-sm" onclick="copyLink()">📋 Salin Link</button>
+      </div>
+    </div>
+    <button class="btn btn-gold btn-full" style="font-size:1.1rem;padding:16px" onclick="startGame()">
+      🌴 Mulai Petualangan!
+    </button>
+    <button class="btn btn-secondary btn-full" style="margin-top:8px" onclick="showScreen('screenHome')">← Kembali</button>
+  </div>
+</div>
+
+<!-- ==================== SCREEN: GAME GURU ==================== -->
+<div class="screen" id="screenGame">
+  <div class="game-header" style="padding:12px 16px;">
+    <div class="trail-header">
+      <div class="game-title" style="font-size:1rem">🌴 Petualangan Hutan</div>
+      <div class="round-badge" id="roundBadge">Ronde 0/25</div>
+      <button class="btn btn-sm btn-secondary" onclick="confirmReset()">↩ Reset</button>
+    </div>
+  </div>
+
+  <div class="game-container">
+    <!-- Map trail -->
+    <div class="map-trail" id="mapTrail"></div>
+
+    <!-- Kelompok status -->
+    <div class="kelompok-grid" id="kelompokGrid"></div>
+
+    <!-- Soal aktif -->
+    <div id="soalActiveArea"></div>
+
+    <!-- Leaderboard sidebar / bottom -->
+    <div id="lbArea"></div>
+
+    <!-- Controls -->
+    <div id="gameControls" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;"></div>
+  </div>
+</div>
+
+<!-- ==================== SCREEN: STUDENT ==================== -->
+<div class="screen" id="screenStudent">
+  <div class="student-header">
+    <div class="game-title" style="font-size:1.1rem">🎒 Mode Siswa</div>
+    <div class="game-subtitle">Pilih Kelompokmu</div>
+    <div id="fbStatus" style="font-size:0.75rem;margin-top:6px;padding:4px 12px;border-radius:20px;background:rgba(0,0,0,0.3);color:var(--text-muted);">⏳ Menghubungkan ke server...</div>
+  </div>
+
+  <!-- Group picker -->
+  <div id="studentGroupPicker">
+    <div style="text-align:center;margin-bottom:16px;font-size:0.9rem;color:var(--text-muted);">
+      Pilih kelompokmu. Soal muncul saat guru melempar soal.
+    </div>
+    <div class="group-select-grid" id="groupSelectGrid"></div>
+    <div style="margin-top:16px;text-align:center;">
+      <button class="btn btn-secondary btn-sm" onclick="showScreen('screenHome')">← Kembali</button>
+    </div>
+  </div>
+
+  <!-- After group selected -->
+  <div id="studentGameArea" style="display:none;width:100%;max-width:440px;">
+    <div class="my-status-card">
+      <div style="font-weight:800;font-size:1.1rem;margin-bottom:4px" id="myGroupName">—</div>
+      <div class="my-hp" id="myHp">❤️❤️❤️</div>
+      <div class="my-pos-text" id="myPosText">Pos 1</div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px" id="myRoundInfo">Menunggu guru...</div>
+    </div>
+    <div id="studentSoalArea">
+      <div style="text-align:center;padding:32px;">
+        <div class="waiting-anim">🌿</div>
+        <div style="color:var(--text-muted);font-size:0.9rem;">Menunggu soal dari guru...</div>
+      </div>
+    </div>
+    <button class="btn btn-secondary btn-sm" style="margin-top:12px" onclick="leaveGroup()">← Ganti Kelompok</button>
+  </div>
+</div>
+
+<!-- ==================== SCREEN: WINNER ==================== -->
+<div class="screen" id="screenWinner">
+  <div class="firework-wrap" id="fireworkWrap"></div>
+  <div class="game-header">
+    <div style="font-size:3rem">🏆</div>
+    <div class="game-title">Petualangan Selesai!</div>
+    <div class="game-subtitle">Bahasa Indonesia · Kelas 7</div>
+  </div>
+  <div id="winnerPodiumArea" style="width:100%;max-width:500px;"></div>
+  <div class="leaderboard" id="finalLeaderboard" style="margin-top:16px;"></div>
+  <button class="btn btn-primary" style="margin-top:24px" onclick="playAgain()">🔄 Main Lagi</button>
+</div>
+
+<!-- Music player bar -->
+<div id="musicBar" style="
+  position:fixed;bottom:16px;right:16px;z-index:90;
+  background:rgba(15,31,15,0.93);
+  border:1px solid rgba(123,201,106,0.35);
+  border-radius:50px;
+  padding:8px 16px;
+  display:flex;align-items:center;gap:10px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.5);
+  font-family:'Nunito',sans-serif;
+  font-size:0.8rem;
+  color:var(--text-muted);
+">
+  <button id="musicToggleBtn" onclick="toggleMusic()" title="Play/Pause musik" style="
+    background:none;border:none;cursor:pointer;font-size:1.4rem;line-height:1;padding:0;transition:transform 0.2s;
+  " onmouseenter="this.style.transform='scale(1.2)'" onmouseleave="this.style.transform='scale(1)'">🔇</button>
+  <div id="musicLabel" style="font-weight:700;color:var(--jungle-bright);min-width:72px;font-size:0.78rem;">Musik OFF</div>
+  <input type="range" id="musicVolume" min="0" max="100" value="60"
+    oninput="setMusicVolume(this.value)"
+    style="width:55px;accent-color:#7bc96a;cursor:pointer;"/>
+  <span id="musicNote" style="font-size:0.95rem;">🎵</span>
+</div>
+
+<!-- QR Code lib -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, onValue, off, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCAVxDGDx-6CQQQbkXNpKSntiE4vSTZG7k",
+  authDomain: "kuis-petualangan.firebaseapp.com",
+  databaseURL: "https://kuis-petualangan-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kuis-petualangan",
+  storageBucket: "kuis-petualangan.firebasestorage.app",
+  messagingSenderId: "243455822644",
+  appId: "1:243455822644:web:280cb758c03579a2467361",
+  measurementId: "G-LSKSHQ7LS9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Expose Firebase to global scope
+window._fbDB = db;
+window._fbRef = ref;
+window._fbSet = set;
+window._fbGet = get;
+window._fbUpdate = update;
+window._fbOnValue = onValue;
+window._fbOff = off;
+window._fbReady = true;
+
+// Notify that Firebase is ready
+document.dispatchEvent(new Event('firebaseReady'));
+</script>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const GURU_PIN = '1234';
+const ANIMAL_ICONS = ['🐯','🦧','🦏','🐘','🦅','🐊','🦎','🐍'];
+const GROUP_COLORS = ['#ff6b35','#4ecdc4','#f5c842','#a8e063','#7b68ee','#ff9ff3','#ffa502','#00d2d3'];
+const POS_ICONS = {5:'🌊',10:'🏔️',15:'🐯',20:'🌴'};
+
+let state = {
+  mode: 'home', // home | setup | game | student | winner
+  kelompokCount: 5,
+  hpInit: 5,
+  posTarget: 20,
+  kelompokNames: [],
+  soalPG: [], // [{pertanyaan, pilihan:[4], jawaban(0-3)}]
+  soalEssay: [], // [{pertanyaan, kunciJawaban}]
+  // Game state
+  kelompok: [], // [{nama, pos, hp, alive, answered, answerIdx, correct, fastBonus}]
+  currentRound: 0,
+  currentSoalIdx: 0, // index into full soal array (0-19 PG, 20-24 essay)
+  soalOrder: [], // shuffled indices
+  phase: 'idle', // idle | question | grading | result | ended
+  timer: null,
+  timeLeft: 0,
+  timeFull: 60,
+  firstCorrect: null,
+  studentAnswers: {}, // kelompokIdx -> {answered, answerIdx}
+  myGroup: null, // student's selected group index
+  currentSoalForStudent: null,
+};
+
+// ============================================================
+// FIREBASE SYNC
+// ============================================================
+let _fbListener = null;
+let _isGuru = false;
+let _roomId = null;
+
+function getRoomId() {
+  if (_roomId) return _roomId;
+  const hash = window.location.hash.replace('#', '');
+  if (hash && hash.startsWith('room-')) {
+    _roomId = hash;
+  } else {
+    _roomId = 'room-' + Math.random().toString(36).substr(2, 8);
+    window.location.hash = _roomId;
+  }
+  return _roomId;
+}
+
+function fbPath(sub) { return 'games/' + getRoomId() + '/' + sub; }
+
+async function fbPushGameState() {
+  if (!window._fbReady || !_isGuru) return;
+  try {
+    const payload = {
+      phase: state.phase, currentRound: state.currentRound,
+      kelompok: state.kelompok, soalOrder: state.soalOrder,
+      hpInit: state.hpInit, posTarget: state.posTarget,
+      timeLeft: state.timeLeft, timeFull: state.timeFull,
+      firstCorrect: state.firstCorrect, ts: Date.now(),
+    };
+    if (state.phase === 'question' || state.phase === 'grading') {
+      const soalRawIdx = state.soalOrder[state.currentRound];
+      const isPG = soalRawIdx < 20;
+      const soal = isPG ? state.soalPG[soalRawIdx] : state.soalEssay[soalRawIdx - 20];
+      payload.currentSoal = { isPG, soalRawIdx,
+        soal: isPG ? { pertanyaan: soal.pertanyaan, pilihan: soal.pilihan } : { pertanyaan: soal.pertanyaan },
+        timeFull: state.timeFull };
+    } else { payload.currentSoal = null; }
+    await window._fbSet(window._fbRef(window._fbDB, fbPath('gameState')), payload);
+  } catch(e) { console.warn('Firebase push error:', e); }
+}
+
+async function fbStudentSubmitToServer(kelompokIdx, answerIdx, isEssay, essayText) {
+  if (!window._fbReady) { showToast('⚠️ Firebase belum siap'); return false; }
+  try {
+    await window._fbSet(window._fbRef(window._fbDB, fbPath('answers/' + kelompokIdx)), {
+      kelompokIdx, answerIdx, isEssay, essayText: essayText || '', ts: Date.now(),
+    });
+    return true;
+  } catch(e) { showToast('⚠️ Gagal kirim jawaban!'); return false; }
+}
+
+function fbListenAnswers() {
+  if (!window._fbReady || !_isGuru) return;
+  const answersRef = window._fbRef(window._fbDB, fbPath('answers'));
+  window._fbOnValue(answersRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data || state.phase !== 'question') return;
+    Object.values(data).forEach(ans => {
+      const k = state.kelompok[ans.kelompokIdx];
+      if (!k || !k.alive || k.answered) return;
+      k.answered = true; k.answerIdx = ans.answerIdx;
+      if (!ans.isEssay) {
+        const soal = state.soalPG[state.soalOrder[state.currentRound]];
+        k.correct = (ans.answerIdx === soal.jawaban);
+        if (k.correct && state.firstCorrect === null) { state.firstCorrect = ans.kelompokIdx; k.fastBonus = true; }
+      } else { k.essayAnswer = ans.essayText; }
+      renderAnswerStatus(); renderKelompokGrid();
+      const isPG2 = state.soalOrder[state.currentRound] < 20;
+      if (isPG2 && state.kelompok.filter(kk=>kk.alive).every(kk=>kk.answered)) { clearInterval(state.timer); resolveRound(); }
+    });
+  });
+}
+
+let _studentListener = null;
+function fbListenGameState() {
+  if (!window._fbReady) {
+    document.addEventListener('firebaseReady', fbListenGameState, {once: true});
+    return;
+  }
+  const gsRef = window._fbRef(window._fbDB, fbPath('gameState'));
+  if (_studentListener) { window._fbOff(gsRef, 'value', _studentListener); }
+  const fbStatusEl = document.getElementById('fbStatus');
+  if (fbStatusEl) { fbStatusEl.textContent = '🟢 Terhubung ke server'; fbStatusEl.style.color = 'var(--leaf)'; }
+  _studentListener = window._fbOnValue(gsRef, (snapshot) => {
+    const data = snapshot.val();
+    if (!data) {
+      const grid = document.getElementById('groupSelectGrid');
+      if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">⏳ Menunggu guru memulai game...</div>';
+      return;
+    }
+    const prevPhase = state.phase;
+    state.phase = data.phase; state.currentRound = data.currentRound;
+    state.hpInit = data.hpInit || state.hpInit; state.posTarget = data.posTarget || state.posTarget;
+    state.timeLeft = data.timeLeft; state.timeFull = data.timeFull;
+    state.firstCorrect = data.firstCorrect; state.soalOrder = data.soalOrder || [];
+    if (data.kelompok) {
+      data.kelompok.forEach((remoteK, i) => {
+        if (!state.kelompok[i]) state.kelompok[i] = {};
+        const wasAnswered = state.kelompok[i].answered;
+        Object.assign(state.kelompok[i], remoteK);
+        if (state.phase === 'question' && wasAnswered) state.kelompok[i].answered = true;
+      });
+    }
+    state.currentSoalForStudent = data.currentSoal || null;
+    updateGroupSelectGrid();
+    if (state.myGroup !== null) {
+      updateMyStatus();
+      if (prevPhase !== state.phase || state.phase === 'question' || state.phase === 'result') updateStudentSoalView(state.myGroup);
+      if (state.phase === 'question') syncStudentTimer();
+    }
+    if (state.phase === 'ended') setTimeout(showWinner, 500);
+  });
+}
+
+async function fbClearAnswers() {
+  if (!window._fbReady || !_isGuru) return;
+  try { await window._fbSet(window._fbRef(window._fbDB, fbPath('answers')), null); } catch(e) {}
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  createLeafBg(); initKelompokNames(); renderSoalList('pg'); updateShareLink();
+  setTimeout(updateShareLink, 300);
+});
+
+document.addEventListener('firebaseReady', () => {
+  console.log('Firebase ready, room:', getRoomId());
+  updateShareLink();
+});
+
+function createLeafBg() {
+  const bg = document.getElementById('leafBg');
+  const leaves = ['🌿','🍃','🌱','🌾','🍀'];
+  for (let i = 0; i < 15; i++) {
+    const s = document.createElement('span');
+    s.textContent = leaves[Math.floor(Math.random()*leaves.length)];
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.animationDuration = (8+Math.random()*12) + 's';
+    s.style.animationDelay = (Math.random()*15) + 's';
+    bg.appendChild(s);
+  }
+}
+
+// ============================================================
+// SCREEN
+// ============================================================
+function enterStudentMode() {
+  showScreen('screenStudent');
+  fbListenGameState();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ============================================================
+// PIN
+// ============================================================
+let pinVal = '';
+function showPinModal() {
+  pinVal = '';
+  updatePinDots();
+  document.getElementById('pinError').textContent = '';
+  document.getElementById('pinModal').classList.add('active');
+}
+function closePinModal() {
+  document.getElementById('pinModal').classList.remove('active');
+}
+function pinInput(d) {
+  if (pinVal.length >= 4) return;
+  pinVal += d;
+  updatePinDots();
+  if (pinVal.length === 4) {
+    setTimeout(() => {
+      if (pinVal === GURU_PIN) {
+        _isGuru = true;
+        getRoomId(); // ensure room created
+        closePinModal();
+        showScreen('screenSetup');
+        updateShareLink();
+      } else {
+        document.getElementById('pinError').textContent = 'PIN salah, coba lagi.';
+        pinVal = '';
+        updatePinDots();
+      }
+    }, 200);
+  }
+}
+function pinClear() { pinVal = pinVal.slice(0,-1); updatePinDots(); }
+function updatePinDots() {
+  for (let i=0;i<4;i++) {
+    document.getElementById('pd'+i).classList.toggle('filled', i < pinVal.length);
+  }
+}
+
+// ============================================================
+// SETUP - KELOMPOK
+// ============================================================
+const DEFAULT_NAMES = ['Elang Jawa','Badak Sumatra','Harimau Bali','Komodo','Orangutan','Bekantan','Anoa','Jalak Bali'];
+function initKelompokNames() {
+  if (state.kelompokNames.length === 0) {
+    state.kelompokNames = DEFAULT_NAMES.map(n => n);
+  }
+  renderKelompokNames();
+}
+function renderKelompokNames() {
+  const c = document.getElementById('kelompokNames');
+  c.innerHTML = '';
+  for (let i=0; i<state.kelompokCount; i++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'form-group';
+    wrap.innerHTML = `
+      <label class="form-label" style="color:${GROUP_COLORS[i]}">
+        ${ANIMAL_ICONS[i]} Kelompok ${i+1}
+      </label>
+      <input class="form-input" id="kname${i}" value="${state.kelompokNames[i] || 'Kelompok '+(i+1)}"
+        oninput="state.kelompokNames[${i}]=this.value"/>
+    `;
+    c.appendChild(wrap);
+  }
+}
+function changeKelompok(d) {
+  state.kelompokCount = Math.min(8, Math.max(3, state.kelompokCount + d));
+  document.getElementById('kelompokCount').textContent = state.kelompokCount;
+  renderKelompokNames();
+}
+function changeHP(d) {
+  state.hpInit = Math.min(5, Math.max(1, state.hpInit + d));
+  document.getElementById('hpCount').textContent = state.hpInit;
+}
+function changePosCount(d) {
+  state.posTarget = Math.min(30, Math.max(10, state.posTarget + d));
+  document.getElementById('posCount').textContent = state.posTarget;
+}
+
+// ============================================================
+// SETUP - SOAL
+// ============================================================
+function switchTab(n) {
+  for (let i=1;i<=3;i++) {
+    document.getElementById('tab'+i).style.display = i===n?'':'none';
+    document.getElementById('tab'+i+'btn').classList.toggle('active', i===n);
+  }
+  if (n===3) { updateShareLink(); generateQR(); }
+}
+
+function renderSoalList(type) {
+  const c = document.getElementById('soalList');
+  c.innerHTML = '';
+  const isPG = type === 'pg';
+  const count = isPG ? 20 : 5;
+  const arr = isPG ? state.soalPG : state.soalEssay;
+  // Ensure arrays are long enough
+  while (state.soalPG.length < 20) state.soalPG.push({pertanyaan:'',pilihan:['','','',''],jawaban:0});
+  while (state.soalEssay.length < 5) state.soalEssay.push({pertanyaan:'',kunciJawaban:''});
+
+  for (let i=0; i<count; i++) {
+    const item = document.createElement('div');
+    item.className = 'soal-item';
+    if (isPG) {
+      const s = state.soalPG[i];
+      item.innerHTML = `
+        <div class="soal-header">
+          <span class="soal-num">Soal ${i+1}</span>
+          <span class="badge badge-pg">PG</span>
+        </div>
+        <textarea class="form-input" rows="2" placeholder="Tulis pertanyaan..."
+          oninput="state.soalPG[${i}].pertanyaan=this.value;updateSoalProgress()"
+        >${s.pertanyaan}</textarea>
+        <div class="pilihan-grid">
+          ${['A','B','C','D'].map((l,j)=>`
+            <div class="pilihan-input-wrap">
+              <span class="pilihan-label">${l}.</span>
+              <input class="form-input" style="padding:8px 10px;font-size:0.85rem" placeholder="Pilihan ${l}"
+                value="${s.pilihan[j]||''}"
+                oninput="state.soalPG[${i}].pilihan[${j}]=this.value;updateSoalProgress()"/>
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top:8px;font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;font-weight:700;">JAWABAN BENAR:</div>
+        <div style="display:flex;gap:8px;">
+          ${['A','B','C','D'].map((l,j)=>`
+            <button class="btn btn-sm ${s.jawaban===j?'btn-primary':'btn-secondary'}"
+              onclick="setJawaban(${i},${j})" id="jwbtn${i}_${j}">${l}</button>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      const s = state.soalEssay[i];
+      item.innerHTML = `
+        <div class="soal-header">
+          <span class="soal-num">Essay ${i+1}</span>
+          <span class="badge badge-essay">Essay</span>
+        </div>
+        <textarea class="form-input" rows="2" placeholder="Tulis pertanyaan essay..."
+          oninput="state.soalEssay[${i}].pertanyaan=this.value;updateSoalProgress()"
+        >${s.pertanyaan}</textarea>
+        <label class="form-label" style="margin-top:8px">Kunci / Kata Kunci Jawaban</label>
+        <input class="form-input" placeholder="Kata kunci jawaban yang benar..."
+          value="${s.kunciJawaban||''}"
+          oninput="state.soalEssay[${i}].kunciJawaban=this.value;updateSoalProgress()"/>
+      `;
+    }
+    c.appendChild(item);
+  }
+  updateSoalProgress();
+}
+
+function showSoalType(t) { renderSoalList(t); }
+
+function setJawaban(soalIdx, jwbIdx) {
+  state.soalPG[soalIdx].jawaban = jwbIdx;
+  // Re-render just this soal's buttons
+  ['A','B','C','D'].forEach((l,j) => {
+    const b = document.getElementById(`jwbtn${soalIdx}_${j}`);
+    if (b) {
+      b.className = `btn btn-sm ${j===jwbIdx?'btn-primary':'btn-secondary'}`;
+    }
+  });
+  updateSoalProgress();
+}
+
+function updateSoalProgress() {
+  let filled = 0;
+  state.soalPG.forEach(s => { if (s.pertanyaan.trim()) filled++; });
+  state.soalEssay.forEach(s => { if (s.pertanyaan.trim()) filled++; });
+  const pct = (filled/25)*100;
+  document.getElementById('soalProgressBar').style.width = pct+'%';
+  document.getElementById('soalProgressText').textContent = `${filled}/25 soal diisi`;
+}
+
+function loadContohSoal() {
+  const contohPG = [
+    {pertanyaan:'Apa yang dimaksud dengan teks fiksi?',pilihan:['Teks berdasarkan fakta nyata','Teks yang bersifat khayalan atau imajinasi','Teks laporan kegiatan','Teks prosedur langkah-langkah'],jawaban:1},
+    {pertanyaan:'Unsur intrinsik cerpen meliputi...',pilihan:['Latar, tema, alur, tokoh, sudut pandang','Latar, pengarang, penerbit, tahun terbit','Tema, ilustrasi, halaman, judul','Alur, penerbit, latar, tokoh'],jawaban:0},
+    {pertanyaan:'Berikut yang termasuk teks nonfiksi adalah...',pilihan:['Novel fantasi','Cerpen horror','Laporan ilmiah','Dongeng fabel'],jawaban:2},
+    {pertanyaan:'Alur maju dalam cerita berarti...',pilihan:['Cerita diceritakan dari akhir ke awal','Cerita diceritakan secara acak','Cerita diceritakan dari awal ke akhir','Cerita menggunakan kilas balik'],jawaban:2},
+    {pertanyaan:'Sudut pandang orang pertama ditandai dengan penggunaan...',pilihan:['Kata "dia" atau "ia"','Kata "mereka"','Kata "aku" atau "saya"','Nama tokoh secara langsung'],jawaban:2},
+    {pertanyaan:'Fungsi latar tempat dalam sebuah cerita adalah...',pilihan:['Menentukan alur cerita','Memberikan gambaran di mana cerita berlangsung','Menjelaskan watak tokoh','Menentukan tema cerita'],jawaban:1},
+    {pertanyaan:'Tokoh protagonis dalam cerita adalah...',pilihan:['Tokoh yang jahat','Tokoh utama yang baik','Tokoh tambahan','Tokoh yang netral'],jawaban:1},
+    {pertanyaan:'Pesan moral dalam cerita disebut juga...',pilihan:['Tema','Amanat','Alur','Latar'],jawaban:1},
+    {pertanyaan:'Teks yang bertujuan menghibur dan menggunakan bahasa imajinatif disebut...',pilihan:['Teks deskripsi','Teks prosedur','Teks fiksi','Teks eksplanasi'],jawaban:2},
+    {pertanyaan:'Konflik dalam cerita berfungsi sebagai...',pilihan:['Pembuka cerita','Pembangun tegangan dan perkembangan plot','Penutup cerita','Pengenalan tokoh'],jawaban:1},
+    {pertanyaan:'Kata "dahulu kala" menandakan latar...',pilihan:['Latar tempat','Latar suasana','Latar waktu','Latar budaya'],jawaban:2},
+    {pertanyaan:'Jenis alur yang menceritakan masa lalu di tengah cerita disebut...',pilihan:['Alur maju','Alur mundur','Alur campuran','Alur melingkar'],jawaban:2},
+    {pertanyaan:'Manakah yang termasuk ciri teks nonfiksi?',pilihan:['Menggunakan bahasa kias','Berdasarkan data dan fakta','Tokoh bersifat rekaan','Latar dibuat-buat'],jawaban:1},
+    {pertanyaan:'Watak tokoh yang disampaikan melalui dialog disebut...',pilihan:['Karakterisasi langsung','Karakterisasi tidak langsung','Narasi pengarang','Deskripsi fisik'],jawaban:1},
+    {pertanyaan:'Bagian awal cerita yang memperkenalkan tokoh dan latar disebut...',pilihan:['Klimaks','Resolusi','Eksposisi','Komplikasi'],jawaban:2},
+    {pertanyaan:'Puncak ketegangan dalam alur cerita disebut...',pilihan:['Eksposisi','Komplikasi','Klimaks','Resolusi'],jawaban:2},
+    {pertanyaan:'Bagian akhir cerita yang menyelesaikan konflik disebut...',pilihan:['Klimaks','Eksposisi','Komplikasi','Resolusi'],jawaban:3},
+    {pertanyaan:'Cerpen adalah singkatan dari...',pilihan:['Cerita panjang','Cerita pendek','Cerminan peristiwa','Cerdas dan panjang'],jawaban:1},
+    {pertanyaan:'Manakah contoh kalimat yang menggunakan sudut pandang orang ketiga?',pilihan:['"Aku pergi ke sekolah."','"Saya tidak tahu."','"Dia berlari sangat cepat."','"Kami bermain bersama."'],jawaban:2},
+    {pertanyaan:'Teks yang menceritakan kehidupan seseorang yang ditulis oleh orang lain disebut...',pilihan:['Autobiografi','Biografi','Novel','Cerpen'],jawaban:1},
+  ];
+  const contohEssay = [
+    {pertanyaan:'Jelaskan perbedaan utama antara teks fiksi dan nonfiksi!',kunciJawaban:'fiksi khayalan imajinasi tidak nyata nonfiksi fakta nyata'},
+    {pertanyaan:'Sebutkan 3 unsur intrinsik cerpen dan jelaskan masing-masing!',kunciJawaban:'tema alur tokoh latar sudut pandang amanat'},
+    {pertanyaan:'Apa yang dimaksud dengan alur maju? Berikan contohnya!',kunciJawaban:'alur maju cerita dari awal ke akhir kronologis'},
+    {pertanyaan:'Mengapa mengetahui sudut pandang penulis penting dalam membaca cerpen?',kunciJawaban:'sudut pandang mempengaruhi cara cerita disampaikan perspektif'},
+    {pertanyaan:'Bagaimana cara kita menemukan amanat atau pesan moral dalam sebuah cerita?',kunciJawaban:'amanat pesan moral dari tingkah laku tokoh akhir cerita'},
+  ];
+  state.soalPG = contohPG;
+  state.soalEssay = contohEssay;
+  renderSoalList('pg');
+  showToast('✨ Contoh soal dimuat!');
+}
+
+// ============================================================
+// SHARE / QR
+// ============================================================
+function updateShareLink() {
+  const base = window.location.href.replace(/[?#].*/, '');
+  const room = getRoomId();
+  const url = base + '#' + room;
+  const el = document.getElementById('shareLink');
+  if (el) el.textContent = url;
+  const homeEl = document.getElementById('homeRoomId');
+  if (homeEl) homeEl.textContent = url;
+}
+let qrGenerated = false;
+function generateQR() {
+  if (qrGenerated) return;
+  const base = window.location.href.replace(/[?#].*/, '');
+  const url = base + '#' + getRoomId();
+  const el = document.getElementById('qrcode');
+  el.innerHTML = '';
+  try {
+    new QRCode(el, {text: url, width: 128, height: 128});
+    qrGenerated = true;
+  } catch(e) {}
+}
+function copyLink() {
+  const base = window.location.href.replace(/[?#].*/, '');
+  const url = base + '#' + getRoomId();
+  navigator.clipboard.writeText(url).then(() => showToast('✅ Link disalin!'));
+}
+
+// ============================================================
+// START GAME
+// ============================================================
+function startGame() {
+  // Validate soal
+  const pgFilled = state.soalPG.filter(s=>s.pertanyaan.trim()).length;
+  const essFilled = state.soalEssay.filter(s=>s.pertanyaan.trim()).length;
+  if (pgFilled < 5) { showToast('⚠️ Isi minimal 5 soal PG dulu!'); return; }
+
+  // Sync names from inputs
+  for (let i=0; i<state.kelompokCount; i++) {
+    const el = document.getElementById('kname'+i);
+    if (el) state.kelompokNames[i] = el.value || 'Kelompok '+(i+1);
+  }
+
+  // Init kelompok
+  state.kelompok = [];
+  for (let i=0; i<state.kelompokCount; i++) {
+    state.kelompok.push({
+      nama: state.kelompokNames[i] || 'Kelompok '+(i+1),
+      pos: 1,
+      hp: state.hpInit,
+      alive: true,
+      answered: false,
+      answerIdx: -1,
+      correct: false,
+      fastBonus: false,
+    });
+  }
+
+  // Build soal order: PG 0-19, essay 20-24, shuffle within groups
+  const pgIndices = [];
+  for (let i=0;i<20;i++) if (state.soalPG[i]?.pertanyaan?.trim()) pgIndices.push(i);
+  const essIndices = [];
+  for (let i=0;i<5;i++) if (state.soalEssay[i]?.pertanyaan?.trim()) essIndices.push(20+i);
+  // Shuffle PG
+  for (let i=pgIndices.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [pgIndices[i],pgIndices[j]]=[pgIndices[j],pgIndices[i]];
+  }
+  state.soalOrder = [...pgIndices, ...essIndices];
+  state.currentRound = 0;
+  state.phase = 'idle';
+  state.studentAnswers = {};
+
+  showScreen('screenGame');
+  renderGameBoard();
+  updateGroupSelectGrid();
+  showToast('🌴 Petualangan dimulai!');
+  playSFX('start');
+  fbPushGameState();
+  fbListenAnswers();
+}
+
+// ============================================================
+// GAME BOARD RENDER
+// ============================================================
+function renderGameBoard() {
+  renderMapTrail();
+  renderKelompokGrid();
+  renderGameControls();
+  updateRoundBadge();
+}
+
+function renderMapTrail() {
+  const trail = document.getElementById('mapTrail');
+  trail.innerHTML = '';
+  const totalPos = state.posTarget;
+  for (let i=1; i<=totalPos+1; i++) {
+    const div = document.createElement('div');
+    div.className = 'trail-pos';
+    const isFinish = i === totalPos+1;
+    
+    if (isFinish) {
+      div.classList.add('finish');
+      div.textContent = '🏁';
+    } else {
+      div.textContent = i;
+    }
+
+    // Find which kelompok are here
+    const here = state.kelompok.filter(k => k.pos === i && k.alive);
+    if (here.length > 0 && !isFinish) {
+      div.classList.add('current');
+      if (here.length === 1) {
+        const icon = ANIMAL_ICONS[state.kelompok.indexOf(here[0])];
+        const span = document.createElement('span');
+        span.className = 'pos-icon';
+        span.textContent = icon;
+        div.appendChild(span);
+      } else {
+        const span = document.createElement('span');
+        span.className = 'pos-icon';
+        span.textContent = '👥';
+        div.appendChild(span);
+      }
+    }
+    
+    // Check if any kelompok passed this pos
+    const maxPos = Math.max(...state.kelompok.filter(k=>k.alive).map(k=>k.pos));
+    if (i < maxPos && here.length === 0 && !isFinish) {
+      div.classList.add('passed');
+    }
+
+    if (POS_ICONS[i]) {
+      const span = document.createElement('span');
+      span.className = 'pos-icon';
+      span.textContent = POS_ICONS[i];
+      div.appendChild(span);
+    }
+
+    trail.appendChild(div);
+  }
+}
+
+function renderKelompokGrid() {
+  const grid = document.getElementById('kelompokGrid');
+  grid.innerHTML = '';
+  state.kelompok.forEach((k, i) => {
+    const card = document.createElement('div');
+    card.className = 'kelompok-card';
+    if (k.answered) card.classList.add('answered');
+    if (!k.alive) card.classList.add('eliminated');
+    
+    const colorBar = document.createElement('div');
+    colorBar.className = 'k-color-bar';
+    colorBar.style.background = GROUP_COLORS[i];
+    card.appendChild(colorBar);
+
+    const hearts = [];
+    for (let h=0; h<state.hpInit; h++) {
+      hearts.push(`<span class="hp-heart ${h >= k.hp ? 'lost':''}">${h < k.hp ? '❤️':'🖤'}</span>`);
+    }
+
+    let statusText = '';
+    let statusColor = 'var(--text-muted)';
+    if (!k.alive) { statusText = '☠️ Gugur'; statusColor = 'var(--hp-red)'; }
+    else if (state.phase === 'result') {
+      if (k.correct) { statusText = '✅ +1 maju' + (k.fastBonus?' +1 bonus':''); statusColor = 'var(--leaf)'; }
+      else if (k.answered) { statusText = '💔 -1 HP'; statusColor = 'var(--hp-red)'; }
+      else { statusText = '⏱️ Timeout'; statusColor = 'var(--amber)'; }
+    } else if (state.phase === 'question') {
+      if (k.answered) { statusText = '✉️ Menjawab'; statusColor = 'var(--water)'; }
+      else { statusText = '⏳ Belum'; }
+    }
+
+    card.innerHTML += `
+      <div class="k-name" style="color:${GROUP_COLORS[i]}">${ANIMAL_ICONS[i]} ${k.nama}</div>
+      <div class="k-pos">Pos ${k.pos} / ${state.posTarget}</div>
+      <div class="hp-display">${hearts.join('')}</div>
+      <div class="k-status" style="color:${statusColor}">${statusText}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function renderGameControls() {
+  const ctrl = document.getElementById('gameControls');
+  ctrl.innerHTML = '';
+  const alive = state.kelompok.filter(k=>k.alive);
+  
+  if (state.phase === 'idle') {
+    if (state.currentRound >= state.soalOrder.length || alive.length <= 0) {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-gold';
+      btn.innerHTML = '🏆 Lihat Hasil Akhir';
+      btn.onclick = showWinner;
+      ctrl.appendChild(btn);
+    } else {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-primary';
+      btn.innerHTML = `🎯 Lempar Soal! (Ronde ${state.currentRound+1})`;
+      btn.onclick = throwSoal;
+      ctrl.appendChild(btn);
+    }
+  } else if (state.phase === 'grading') {
+    document.getElementById('soalActiveArea').innerHTML = renderEssayGrading();
+  } else if (state.phase === 'result') {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-primary';
+    btn.innerHTML = 'Ronde Berikutnya ▶';
+    btn.onclick = nextRound;
+    ctrl.appendChild(btn);
+    
+    const btnW = document.createElement('button');
+    btnW.className = 'btn btn-secondary';
+    btnW.innerHTML = '🏆 Akhiri Game';
+    btnW.onclick = showWinner;
+    ctrl.appendChild(btnW);
+  }
+}
+
+function updateRoundBadge() {
+  document.getElementById('roundBadge').textContent = 
+    `Ronde ${state.currentRound}/${state.soalOrder.length}`;
+}
+
+// ============================================================
+// THROW SOAL
+// ============================================================
+function throwSoal() {
+  if (state.currentRound >= state.soalOrder.length) { showWinner(); return; }
+  
+  const soalRawIdx = state.soalOrder[state.currentRound];
+  state.phase = 'question';
+  state.firstCorrect = null;
+  state.studentAnswers = {};
+  state.kelompok.forEach(k => { k.answered = false; k.answerIdx = -1; k.correct = false; k.fastBonus = false; });
+
+  // Determine if PG or essay
+  const isPG = soalRawIdx < 20;
+  const soal = isPG ? state.soalPG[soalRawIdx] : state.soalEssay[soalRawIdx-20];
+
+  // Timer
+  state.timeFull = isPG ? 60 : 90;
+  state.timeLeft = state.timeFull;
+  clearInterval(state.timer);
+  state.timer = setInterval(() => {
+    state.timeLeft--;
+    updateTimerDisplay(state.timeLeft, state.timeFull);
+    // Push timeLeft to Firebase every 3 seconds so students get updated timer
+    if (state.timeLeft % 3 === 0 || state.timeLeft <= 5) fbPushGameState();
+    if (state.timeLeft <= 0) {
+      clearInterval(state.timer);
+      if (isPG) { resolveRound(); } else { resolveRound(); }
+    }
+  }, 1000);
+
+  // Push soal to students
+  state.currentSoalForStudent = { isPG, soalRawIdx, soal, timeLeft: state.timeLeft, timeFull: state.timeFull };
+
+  renderCurrentSoal(isPG, soal, soalRawIdx);
+  renderGameControls();
+  renderKelompokGrid();
+  updateGroupSelectGrid();
+  fbPushGameState();
+}
+
+function renderCurrentSoal(isPG, soal, soalRawIdx) {
+  const area = document.getElementById('soalActiveArea');
+  const circumference = 2 * Math.PI * 26;
+  
+  let pilahanHTML = '';
+  if (isPG) {
+    const shuffled = soal.pilihan.map((p,i)=>({text:p,origIdx:i})).sort(()=>Math.random()-0.5);
+    pilahanHTML = `<div class="pilihan-game">
+      ${shuffled.map((p,i)=>`
+        <div class="pilihan-btn" id="pgPilihan${i}" onclick="guruSelectPG(${soalRawIdx}, ${p.origIdx}, ${i}, ${shuffled.map(x=>x.origIdx).join(',') ? JSON.stringify(shuffled.map(x=>x.origIdx)):''})">
+          <span class="pilihan-letter">${['A','B','C','D'][i]}</span>
+          ${p.text}
+        </div>
+      `).join('')}
+    </div>
+    <div style="font-size:0.8rem;color:var(--text-muted);text-align:center;margin-bottom:8px;">
+      👁 Tampilan guru (jawaban benar: <strong style="color:var(--leaf)">${['A','B','C','D'][soal.jawaban]}</strong>)
+    </div>`;
+  } else {
+    pilahanHTML = `
+      <div style="font-size:0.85rem;color:var(--amber);margin-bottom:8px;">✍️ Soal Essay — Siswa menjawab di HP masing-masing</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);">Kunci: <em style="color:var(--jungle-bright)">${soal.kunciJawaban}</em></div>
+    `;
+  }
+
+  area.innerHTML = `
+    <div class="soal-game-card" style="margin-bottom:16px;">
+      <div class="soal-meta">
+        <span class="soal-type-badge ${isPG?'badge-pg':'badge-essay'}">${isPG?'PG':'Essay'} • Ronde ${state.currentRound+1}</span>
+        <div class="timer-ring">
+          <svg width="60" height="60" viewBox="0 0 60 60">
+            <circle class="timer-circle-bg" cx="30" cy="30" r="26"/>
+            <circle class="timer-circle-fg" id="timerCircle" cx="30" cy="30" r="26"
+              stroke-dasharray="${circumference}"
+              stroke-dashoffset="${circumference - (circumference * state.timeLeft / state.timeFull)}"/>
+          </svg>
+          <div class="timer-number" id="timerNum">${state.timeLeft}</div>
+        </div>
+      </div>
+      <div class="soal-text">${soal.pertanyaan}</div>
+      ${pilahanHTML}
+      <div class="divider"></div>
+      <div style="font-size:0.85rem;font-weight:700;margin-bottom:8px;color:var(--text-muted);">Status Jawaban (${state.kelompok.filter(k=>k.alive).length} kelompok aktif)</div>
+      <div id="answerStatusArea" class="answer-status-grid"></div>
+    </div>
+  `;
+  renderAnswerStatus();
+}
+
+function updateTimerDisplay(timeLeft, timeFull) {
+  const numEl = document.getElementById('timerNum');
+  const circEl = document.getElementById('timerCircle');
+  if (numEl) numEl.textContent = timeLeft;
+  if (circEl) {
+    const c = 2*Math.PI*26;
+    const offset = c - (c * timeLeft / timeFull);
+    circEl.style.strokeDashoffset = offset;
+    if (timeLeft <= 10) circEl.style.stroke = 'var(--hp-red)';
+    else if (timeLeft <= 20) circEl.style.stroke = 'var(--amber)';
+    else circEl.style.stroke = 'var(--jungle-bright)';
+  }
+}
+
+function renderAnswerStatus() {
+  const area = document.getElementById('answerStatusArea');
+  if (!area) return;
+  area.innerHTML = '';
+  state.kelompok.forEach((k,i) => {
+    if (!k.alive) return;
+    const chip = document.createElement('div');
+    chip.className = 'answer-chip' + (k.answered ? ' submitted':'');
+    chip.innerHTML = `
+      <span style="color:${GROUP_COLORS[i]}">${ANIMAL_ICONS[i]} ${k.nama.split(' ')[0]}</span>
+      <span>${k.answered ? '✉️':''}</span>
+    `;
+    area.appendChild(chip);
+  });
+}
+
+// ============================================================
+// STUDENT ANSWER
+// ============================================================
+function studentSubmitAnswer(kelompokIdx, answerIdx, isEssay, essayText='') {
+  const k = state.kelompok[kelompokIdx];
+  if (!k || !k.alive || k.answered) return;
+  if (state.phase !== 'question') return;
+
+  k.answered = true;
+  k.answerIdx = answerIdx;
+
+  if (!isEssay) {
+    const soalRawIdx = state.soalOrder[state.currentRound];
+    const soal = state.soalPG[soalRawIdx];
+    k.correct = (answerIdx === soal.jawaban);
+    if (k.correct && state.firstCorrect === null) {
+      state.firstCorrect = kelompokIdx;
+      k.fastBonus = true;
+    }
+  } else {
+    k.essayAnswer = essayText;
+  }
+
+  renderAnswerStatus();
+  renderKelompokGrid();
+
+  // Auto-resolve PG if all alive answered
+  const soalRawIdx = state.soalOrder[state.currentRound];
+  const isPG = soalRawIdx < 20;
+  if (isPG) {
+    const allAnswered = state.kelompok.filter(k=>k.alive).every(k=>k.answered);
+    if (allAnswered) { clearInterval(state.timer); resolveRound(); }
+  }
+
+  // Update student screen
+  updateStudentSoalView(kelompokIdx);
+}
+
+// ============================================================
+// RESOLVE ROUND
+// ============================================================
+function resolveRound() {
+  const soalRawIdx = state.soalOrder[state.currentRound];
+  const isPG = soalRawIdx < 20;
+  state.phase = 'result';
+
+  if (!isPG) {
+    // Need manual grading — switch to grading phase
+    state.phase = 'grading';
+    renderGameControls();
+    renderCurrentSoalGrading();
+    return;
+  }
+
+  applyResults();
+}
+
+function applyResults() {
+  state.kelompok.forEach((k,i) => {
+    if (!k.alive) return;
+    if (k.correct) {
+      k.pos = Math.min(k.pos + 1 + (k.fastBonus?1:0), state.posTarget + 1);
+      if (k.pos >= state.posTarget + 1) {
+        // Reached finish
+        k.pos = state.posTarget + 1;
+      }
+    } else if (k.answered || !k.answered) {
+      // Wrong or timeout
+      k.hp = Math.max(0, k.hp - 1);
+      if (k.hp <= 0) k.alive = false;
+    }
+  });
+
+  state.phase = 'result';
+  state.currentRound++;
+  renderMapTrail();
+  renderKelompokGrid();
+  renderGameControls();
+  updateRoundBadge();
+  updateStudentResults();
+  fbPushGameState();
+  fbClearAnswers();
+
+  // Check win conditions
+  const winners = state.kelompok.filter(k => k.pos >= state.posTarget + 1);
+  const alive = state.kelompok.filter(k => k.alive);
+  if (winners.length > 0 || alive.length === 0 || alive.length === 1) {
+    setTimeout(showWinner, 2000);
+  }
+}
+
+// ============================================================
+// ESSAY GRADING
+// ============================================================
+function renderCurrentSoalGrading() {
+  const soalRawIdx = state.soalOrder[state.currentRound];
+  const soal = state.soalEssay[soalRawIdx - 20];
+  const area = document.getElementById('soalActiveArea');
+  
+  let itemsHTML = '';
+  state.kelompok.forEach((k,i) => {
+    if (!k.alive) return;
+    itemsHTML += `
+      <div class="essay-grade-item">
+        <div style="font-weight:800;color:${GROUP_COLORS[i]}">${ANIMAL_ICONS[i]} ${k.nama}</div>
+        <div class="essay-answer-text">${k.essayAnswer || '<em style="opacity:0.5">Tidak menjawab</em>'}</div>
+        <div class="grade-btns">
+          <button class="btn btn-sm btn-primary" onclick="gradeEssay(${i}, true)">✅ Benar</button>
+          <button class="btn btn-sm btn-danger" onclick="gradeEssay(${i}, false)">❌ Salah</button>
+        </div>
+      </div>
+    `;
+  });
+
+  area.innerHTML = `
+    <div class="soal-game-card" style="margin-bottom:16px;">
+      <div class="card-title">✍️ Nilai Jawaban Essay</div>
+      <div class="soal-text">${soal.pertanyaan}</div>
+      <div style="font-size:0.8rem;margin-bottom:12px;color:var(--text-muted);">
+        Kunci: <em style="color:var(--jungle-bright)">${soal.kunciJawaban}</em>
+      </div>
+      <div id="essayGradeItems">${itemsHTML}</div>
+      <div id="essayGradeStatus" style="font-size:0.85rem;color:var(--text-muted);margin-top:8px;"></div>
+    </div>
+  `;
+  
+  state._essayGraded = {};
+}
+
+let _essayGraded = {};
+function gradeEssay(kelompokIdx, correct) {
+  _essayGraded[kelompokIdx] = correct;
+  state.kelompok[kelompokIdx].correct = correct;
+  state.kelompok[kelompokIdx].answered = true;
+  
+  const aliveKelompok = state.kelompok.filter((k,i) => k.alive && i !== kelompokIdx);
+  const items = document.getElementById('essayGradeItems');
+  if (items) {
+    const cards = items.querySelectorAll('.essay-grade-item');
+    // Update visual
+    const aliveIdxs = [];
+    state.kelompok.forEach((k,i) => { if (k.alive) aliveIdxs.push(i); });
+    const pos = aliveIdxs.indexOf(kelompokIdx);
+    if (pos >= 0 && cards[pos]) {
+      cards[pos].style.opacity = '0.5';
+      cards[pos].style.borderColor = correct ? 'var(--leaf)' : 'var(--hp-red)';
+    }
+  }
+
+  // Check if all alive graded
+  const allGraded = state.kelompok.filter(k=>k.alive).every((k,_,arr) => {
+    const i = state.kelompok.indexOf(k);
+    return k.answered;
+  });
+  
+  const gradedCount = Object.keys(_essayGraded).length;
+  const aliveCount = state.kelompok.filter(k=>k.alive).length;
+  const statusEl = document.getElementById('essayGradeStatus');
+  if (statusEl) statusEl.textContent = `${gradedCount}/${aliveCount} dinilai`;
+
+  if (gradedCount >= aliveCount) {
+    const firstCorrectIdx = state.kelompok.findIndex(k=>k.alive && k.correct);
+    if (firstCorrectIdx >= 0) state.kelompok[firstCorrectIdx].fastBonus = true;
+    state.phase = 'result';
+    setTimeout(applyResults, 500);
+  }
+}
+
+function renderEssayGrading() { return ''; }
+
+// ============================================================
+// NEXT ROUND
+// ============================================================
+function nextRound() {
+  state.phase = 'idle';
+  state.kelompok.forEach(k => { k.answered = false; k.answerIdx = -1; k.correct = false; k.fastBonus = false; });
+  document.getElementById('soalActiveArea').innerHTML = '';
+  renderGameBoard();
+  _essayGraded = {};
+  fbPushGameState();
+  fbClearAnswers();
+}
+
+function confirmReset() {
+  if (confirm('Reset semua? Setup soal tidak akan hilang.')) {
+    clearInterval(state.timer);
+    state.phase = 'idle';
+    state.currentRound = 0;
+    state.kelompok = [];
+    state.studentAnswers = {};
+    showScreen('screenSetup');
+  }
+}
+
+// ============================================================
+// STUDENT FLOW
+// ============================================================
+function updateGroupSelectGrid() {
+  const grid = document.getElementById('groupSelectGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  
+  if (state.kelompok.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-size:0.9rem;padding:20px;">
+      ⏳ Menunggu guru memulai game...
+    </div>`;
+    return;
+  }
+
+  state.kelompok.forEach((k,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'group-select-btn';
+    btn.style.borderColor = GROUP_COLORS[i];
+    if (!k.alive) btn.style.opacity = '0.4';
+    btn.innerHTML = `<span class="g-icon">${ANIMAL_ICONS[i]}</span>${k.nama}`;
+    btn.onclick = () => { if (k.alive) selectGroup(i); else showToast('Kelompok ini sudah gugur!'); };
+    grid.appendChild(btn);
+  });
+}
+
+function selectGroup(idx) {
+  state.myGroup = idx;
+  document.getElementById('studentGroupPicker').style.display = 'none';
+  document.getElementById('studentGameArea').style.display = '';
+  updateMyStatus();
+  updateStudentSoalView(idx);
+}
+
+function leaveGroup() {
+  state.myGroup = null;
+  document.getElementById('studentGroupPicker').style.display = '';
+  document.getElementById('studentGameArea').style.display = 'none';
+  updateGroupSelectGrid();
+}
+
+function updateMyStatus() {
+  const idx = state.myGroup;
+  if (idx === null) return;
+  const k = state.kelompok[idx];
+  if (!k) return;
+  
+  document.getElementById('myGroupName').innerHTML = `${ANIMAL_ICONS[idx]} ${k.nama}`;
+  document.getElementById('myGroupName').style.color = GROUP_COLORS[idx];
+  
+  const hearts = [];
+  for (let h=0; h<state.hpInit; h++) {
+    hearts.push(`<span>${h < k.hp ? '❤️':'🖤'}</span>`);
+  }
+  document.getElementById('myHp').innerHTML = hearts.join('');
+  document.getElementById('myPosText').textContent = `📍 Pos ${k.pos} / ${state.posTarget}`;
+  document.getElementById('myRoundInfo').textContent = `Ronde ${state.currentRound} / ${state.soalOrder.length}`;
+}
+
+function updateStudentSoalView(kelompokIdx) {
+  if (state.myGroup === null || state.myGroup !== kelompokIdx) return;
+  const area = document.getElementById('studentSoalArea');
+  if (!area) return;
+  const k = state.kelompok[kelompokIdx];
+  
+  if (!k.alive) {
+    area.innerHTML = `<div class="result-screen">
+      <div class="result-icon">☠️</div>
+      <div class="result-title" style="color:var(--hp-red)">Kelompok Gugur</div>
+      <div class="result-desc">HP habis. Lebih semangat lagi next time!</div>
+    </div>`;
+    return;
+  }
+
+  if (state.phase === 'idle') {
+    area.innerHTML = `<div style="text-align:center;padding:32px;">
+      <div class="waiting-anim">🌿</div>
+      <div style="color:var(--text-muted);font-size:0.9rem;">Menunggu soal dari guru...</div>
+    </div>`;
+    return;
+  }
+
+  if (state.phase === 'result') {
+    const correct = k.correct;
+    area.innerHTML = `<div class="result-screen">
+      <div class="result-icon">${correct ? '✅':'💔'}</div>
+      <div class="result-title" style="color:${correct?'var(--leaf)':'var(--hp-red)'}">
+        ${correct ? 'Benar!' : 'Salah!'}
+      </div>
+      <div class="result-desc">
+        ${correct
+          ? `+1 maju${k.fastBonus ? ' +1 bonus (tercepat!)':''} → Pos ${k.pos}`
+          : `HP: ${k.hp} tersisa`}
+      </div>
+    </div>`;
+    updateMyStatus();
+    return;
+  }
+
+  if (k.answered) {
+    area.innerHTML = `<div class="result-screen">
+      <div class="result-icon">✉️</div>
+      <div class="result-title">Jawaban Terkirim!</div>
+      <div class="result-desc">Menunggu kelompok lain...</div>
+    </div>`;
+    return;
+  }
+
+  // Show question
+  if (!state.currentSoalForStudent) return;
+  const { isPG, soal, soalRawIdx } = state.currentSoalForStudent;
+
+  if (isPG) {
+    // Create shuffled options per kelompok
+    const seed = kelompokIdx * 7 + soalRawIdx;
+    const shuffled = soal.pilihan.map((p,i)=>({text:p,origIdx:i}));
+    // Simple deterministic shuffle per kelompok
+    for (let i=shuffled.length-1;i>0;i--) {
+      const j = (seed + i) % (i+1);
+      [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+    }
+
+    area.innerHTML = `
+      <div class="soal-game-card">
+        <div class="soal-meta">
+          <span class="soal-type-badge badge-pg">PG · Ronde ${state.currentRound+1}</span>
+          <div class="timer-ring">
+            <svg width="60" height="60" viewBox="0 0 60 60">
+              <circle class="timer-circle-bg" cx="30" cy="30" r="26"/>
+              <circle class="timer-circle-fg" id="sTimerCircle" cx="30" cy="30" r="26"
+                stroke-dasharray="${2*Math.PI*26}"
+                stroke-dashoffset="${2*Math.PI*26 - (2*Math.PI*26 * state.timeLeft / state.timeFull)}"/>
+            </svg>
+            <div class="timer-number" id="sTimerNum">${state.timeLeft}</div>
+          </div>
+        </div>
+        <div class="soal-text">${soal.pertanyaan}</div>
+        <div class="pilihan-game">
+          ${shuffled.map((p,i)=>`
+            <button class="pilihan-btn" onclick="submitStudentPG(${kelompokIdx}, ${p.origIdx})">
+              <span class="pilihan-letter">${['A','B','C','D'][i]}</span>
+              ${p.text}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    // Sync timer display
+    syncStudentTimer();
+  } else {
+    area.innerHTML = `
+      <div class="soal-game-card">
+        <div class="soal-meta">
+          <span class="soal-type-badge badge-essay">Essay · Ronde ${state.currentRound+1}</span>
+          <div class="timer-ring">
+            <svg width="60" height="60" viewBox="0 0 60 60">
+              <circle class="timer-circle-bg" cx="30" cy="30" r="26"/>
+              <circle class="timer-circle-fg" id="sTimerCircle" cx="30" cy="30" r="26"
+                stroke-dasharray="${2*Math.PI*26}"
+                stroke-dashoffset="0"/>
+            </svg>
+            <div class="timer-number" id="sTimerNum">${state.timeLeft}</div>
+          </div>
+        </div>
+        <div class="soal-text">${soal.pertanyaan}</div>
+        <textarea class="form-input" id="essayInput_${kelompokIdx}" rows="4" 
+          placeholder="Tulis jawabanmu di sini..."></textarea>
+        <button class="btn btn-primary btn-full" style="margin-top:12px"
+          onclick="submitStudentEssay(${kelompokIdx})">
+          Kirim Jawaban ✉️
+        </button>
+      </div>
+    `;
+    syncStudentTimer();
+  }
+}
+
+let studentTimerInterval = null;
+function syncStudentTimer() {
+  clearInterval(studentTimerInterval);
+  studentTimerInterval = setInterval(() => {
+    const n = document.getElementById('sTimerNum');
+    const c = document.getElementById('sTimerCircle');
+    if (n) n.textContent = state.timeLeft;
+    if (c) {
+      const circ = 2*Math.PI*26;
+      c.style.strokeDashoffset = circ - (circ * state.timeLeft / state.timeFull);
+      if (state.timeLeft <= 10) c.style.stroke = 'var(--hp-red)';
+      else if (state.timeLeft <= 20) c.style.stroke = 'var(--amber)';
+    }
+    if (state.phase !== 'question') clearInterval(studentTimerInterval);
+  }, 500);
+}
+
+function submitStudentPG(kelompokIdx, answerOrigIdx) {
+  const k = state.kelompok[kelompokIdx];
+  if (!k || !k.alive || k.answered || state.phase !== 'question') return;
+  // Optimistic local update
+  k.answered = true;
+  renderAnswerStatus(); renderKelompokGrid(); updateStudentSoalView(kelompokIdx);
+  // Send to Firebase
+  fbStudentSubmitToServer(kelompokIdx, answerOrigIdx, false, '');
+}
+
+function submitStudentEssay(kelompokIdx) {
+  const input = document.getElementById('essayInput_'+kelompokIdx);
+  const text = input ? input.value.trim() : '';
+  if (!text) { showToast('Tulis jawabanmu dulu!'); return; }
+  state.kelompok[kelompokIdx].essayAnswer = text;
+  state.kelompok[kelompokIdx].answered = true;
+  updateStudentSoalView(kelompokIdx);
+  // Send to Firebase
+  fbStudentSubmitToServer(kelompokIdx, -1, true, text);
+}
+
+function updateStudentResults() {
+  if (state.myGroup !== null) {
+    updateStudentSoalView(state.myGroup);
+  }
+}
+
+// ============================================================
+// WINNER SCREEN
+// ============================================================
+function showWinner() {
+  clearInterval(state.timer);
+  state.phase = 'ended';
+
+  const sorted = [...state.kelompok].map((k,i)=>({...k, origIdx:i}))
+    .sort((a,b) => {
+      if (a.pos !== b.pos) return b.pos - a.pos;
+      return b.hp - a.hp;
+    });
+
+  // Podium
+  const podiumArea = document.getElementById('winnerPodiumArea');
+  const top3 = sorted.slice(0,3);
+  const podiumOrder = top3.length >= 2 ? [top3[1], top3[0], top3[2]].filter(Boolean) : top3;
+  const podiumClass = ['podium-2','podium-1','podium-3'];
+  const podiumRank = ['🥈','🥇','🥉'];
+  const rankMap = podiumOrder.length >= 2 ? [1,0,2] : [0];
+  
+  let podiumHTML = '<div class="winner-podium">';
+  podiumOrder.forEach((k, pi) => {
+    const i = top3.indexOf(k);
+    const cls = i===0?'podium-1':i===1?'podium-2':'podium-3';
+    const rank = i===0?'🥇':i===1?'🥈':'🥉';
+    podiumHTML += `
+      <div class="podium-col">
+        <div style="font-size:1.8rem;margin-bottom:4px">${ANIMAL_ICONS[k.origIdx]}</div>
+        <div class="podium-block ${cls}">
+          <div class="podium-rank">${rank}</div>
+          <div class="podium-name">${k.nama}</div>
+          <div style="font-size:0.7rem;opacity:0.8">Pos ${k.pos}</div>
+        </div>
+      </div>
+    `;
+  });
+  podiumHTML += '</div>';
+  podiumArea.innerHTML = podiumHTML;
+
+  // Full leaderboard
+  const lb = document.getElementById('finalLeaderboard');
+  lb.innerHTML = sorted.map((k,i) => `
+    <div class="lb-item ${i<3?'rank-'+(i+1):''}">
+      <div class="lb-rank">${['🥇','🥈','🥉'][i]||i+1}</div>
+      <div style="font-size:1.5rem">${ANIMAL_ICONS[k.origIdx]}</div>
+      <div class="lb-info">
+        <div class="lb-name" style="color:${GROUP_COLORS[k.origIdx]}">${k.nama}</div>
+        <div class="lb-detail">${k.hp > 0 ? '❤️'.repeat(k.hp):''} ${k.alive?'':'☠️ Gugur'}</div>
+      </div>
+      <div class="lb-pos">Pos ${k.pos}</div>
+    </div>
+  `).join('');
+
+  showScreen('screenWinner');
+  launchFireworks();
+  playSFX('winner');
+  fbPushGameState();
+}
+
+function launchFireworks() {
+  const wrap = document.getElementById('fireworkWrap');
+  const colors = ['#f5c842','#7bc96a','#4ecdc4','#ff6b35','#a8e063'];
+  for (let burst=0; burst<5; burst++) {
+    setTimeout(() => {
+      const cx = 20 + Math.random()*60 + 'vw';
+      const cy = 10 + Math.random()*50 + 'vh';
+      for (let p=0; p<20; p++) {
+        const el = document.createElement('div');
+        el.className = 'firework';
+        el.style.left = cx; el.style.top = cy;
+        el.style.background = colors[Math.floor(Math.random()*colors.length)];
+        const angle = (p/20)*2*Math.PI;
+        const dist = 50+Math.random()*80;
+        el.style.setProperty('--tx', Math.cos(angle)*dist+'px');
+        el.style.setProperty('--ty', Math.sin(angle)*dist+'px');
+        el.style.animationDelay = Math.random()*0.3+'s';
+        wrap.appendChild(el);
+        setTimeout(()=>el.remove(), 2000);
+      }
+    }, burst * 600);
+  }
+}
+
+function playAgain() {
+  clearInterval(state.timer);
+  state.phase = 'idle';
+  state.currentRound = 0;
+  state.kelompok = [];
+  state.soalOrder = [];
+  state.studentAnswers = {};
+  state.myGroup = null;
+  document.getElementById('screenGame').innerHTML = '';
+  showScreen('screenHome');
+}
+
+// ============================================================
+// MUSIC SYSTEM (Tone.js procedural jungle music)
+// ============================================================
+let musicOn = false;
+let musicInitialized = false;
+let musicParts = [];
+let musicVolNode = null;
+let noteAnim = null;
+
+const JUNGLE_MELODY = [
+  'C4','E4','G4','A4','G4','E4','C4','D4',
+  'F4','A4','C5','B4','A4','F4','D4','E4',
+  'G4','B4','D5','C5','B4','G4','E4','F4',
+  'A4','C5','E5','D5','C5','A4','G4','A4',
+];
+const JUNGLE_BASS = [
+  'C2','C2','G2','G2','F2','F2','G2','G2',
+];
+const JUNGLE_CHORDS = [
+  ['C3','E3','G3'],['C3','E3','G3'],
+  ['G2','B2','D3'],['G2','B2','D3'],
+  ['F2','A2','C3'],['F2','A2','C3'],
+  ['G2','B2','D3'],['G2','B2','D3'],
+];
+
+async function initMusic() {
+  if (musicInitialized) return;
+  musicInitialized = true;
+  await Tone.start();
+
+  musicVolNode = new Tone.Volume(-12).toDestination();
+  const reverb = new Tone.Reverb({ decay: 2.5, wet: 0.3 }).connect(musicVolNode);
+  const delay = new Tone.FeedbackDelay('8n', 0.2).connect(reverb);
+
+  // --- Melody synth (marimba-like) ---
+  const melSynth = new Tone.Synth({
+    oscillator: { type: 'triangle' },
+    envelope: { attack: 0.01, decay: 0.3, sustain: 0.1, release: 0.5 },
+  }).connect(delay);
+
+  // --- Bass synth ---
+  const bassSynth = new Tone.Synth({
+    oscillator: { type: 'sine' },
+    envelope: { attack: 0.05, decay: 0.4, sustain: 0.3, release: 0.8 },
+    volume: -6,
+  }).connect(reverb);
+
+  // --- Chord pad ---
+  const padSynth = new Tone.PolySynth(Tone.Synth, {
+    oscillator: { type: 'sine' },
+    envelope: { attack: 0.3, decay: 0.5, sustain: 0.4, release: 1.2 },
+    volume: -18,
+  }).connect(reverb);
+
+  // --- Bird/nature percussion using MetalSynth ---
+  const bird1 = new Tone.MetalSynth({
+    frequency: 600, envelope: { attack: 0.001, decay: 0.3, release: 0.2 },
+    harmonicity: 5.1, modulationIndex: 32, resonance: 4000, octaves: 1.5,
+    volume: -24,
+  }).connect(reverb);
+
+  const bird2 = new Tone.MetalSynth({
+    frequency: 900, envelope: { attack: 0.001, decay: 0.15, release: 0.1 },
+    harmonicity: 8.5, modulationIndex: 48, resonance: 6000, octaves: 1.5,
+    volume: -28,
+  }).connect(reverb);
+
+  // --- Melody sequence ---
+  let melIdx = 0;
+  const melPart = new Tone.Sequence((time) => {
+    melSynth.triggerAttackRelease(JUNGLE_MELODY[melIdx % JUNGLE_MELODY.length], '8n', time);
+    melIdx++;
+  }, [...Array(JUNGLE_MELODY.length).keys()], '8n');
+
+  // --- Bass sequence ---
+  let bassIdx = 0;
+  const bassPart = new Tone.Sequence((time) => {
+    bassSynth.triggerAttackRelease(JUNGLE_BASS[bassIdx % JUNGLE_BASS.length], '4n', time);
+    bassIdx++;
+  }, [...Array(JUNGLE_BASS.length).keys()], '4n');
+
+  // --- Chord sequence ---
+  let chordIdx = 0;
+  const chordPart = new Tone.Sequence((time) => {
+    padSynth.triggerAttackRelease(JUNGLE_CHORDS[chordIdx % JUNGLE_CHORDS.length], '2n', time);
+    chordIdx++;
+  }, [...Array(JUNGLE_CHORDS.length).keys()], '2n');
+
+  // --- Bird calls (random-ish with Tone.Loop) ---
+  const birdLoop1 = new Tone.Loop((time) => {
+    if (Math.random() > 0.4) bird1.triggerAttackRelease('16n', time);
+  }, '2n');
+  const birdLoop2 = new Tone.Loop((time) => {
+    if (Math.random() > 0.6) bird2.triggerAttackRelease('32n', time);
+  }, '3n');
+
+  Tone.Transport.bpm.value = 92;
+
+  melPart.start(0);
+  bassPart.start(0);
+  chordPart.start(0);
+  birdLoop1.start(0);
+  birdLoop2.start('1m');
+
+  musicParts = [melPart, bassPart, chordPart, birdLoop1, birdLoop2];
+  setMusicVolume(document.getElementById('musicVolume').value);
+}
+
+async function toggleMusic() {
+  if (!musicInitialized) await initMusic();
+
+  musicOn = !musicOn;
+  const btn = document.getElementById('musicToggleBtn');
+  const label = document.getElementById('musicLabel');
+  const note = document.getElementById('musicNote');
+
+  if (musicOn) {
+    Tone.Transport.start();
+    btn.textContent = '🔊';
+    label.textContent = 'Musik ON';
+    label.style.color = 'var(--leaf)';
+    // Animate note
+    note.style.animation = 'musicNoteAnim 1s ease-in-out infinite alternate';
+  } else {
+    Tone.Transport.stop();
+    Tone.Transport.position = 0;
+    btn.textContent = '🔇';
+    label.textContent = 'Musik OFF';
+    label.style.color = 'var(--jungle-bright)';
+    note.style.animation = 'none';
+  }
+}
+
+function setMusicVolume(val) {
+  if (musicVolNode) {
+    // Map 0-100 to -40 to 0 dB
+    const db = val <= 0 ? -Infinity : -40 + (val / 100) * 40;
+    musicVolNode.volume.value = db;
+  }
+}
+
+// SFX
+async function playSFX(type) {
+  if (!musicOn) return;
+  await Tone.start();
+  try {
+    if (type === 'correct') {
+      const s = new Tone.Synth({ oscillator:{type:'triangle'}, envelope:{attack:0.01,decay:0.2,sustain:0,release:0.1}, volume:-10 }).toDestination();
+      s.triggerAttackRelease('E5','16n'); 
+      setTimeout(()=>s.triggerAttackRelease('G5','16n'),120);
+      setTimeout(()=>s.triggerAttackRelease('C6','8n'),240);
+      setTimeout(()=>s.dispose(),800);
+    } else if (type === 'wrong') {
+      const s = new Tone.Synth({ oscillator:{type:'sawtooth'}, envelope:{attack:0.01,decay:0.3,sustain:0,release:0.2}, volume:-14 }).toDestination();
+      s.triggerAttackRelease('C3','8n');
+      setTimeout(()=>s.triggerAttackRelease('B2','4n'),200);
+      setTimeout(()=>s.dispose(),800);
+    } else if (type === 'start') {
+      const s = new Tone.Synth({ oscillator:{type:'triangle'}, envelope:{attack:0.02,decay:0.3,sustain:0.1,release:0.4}, volume:-8 }).toDestination();
+      ['C4','E4','G4','C5'].forEach((n,i)=>setTimeout(()=>s.triggerAttackRelease(n,'16n'),i*120));
+      setTimeout(()=>s.dispose(),1200);
+    } else if (type === 'winner') {
+      const s = new Tone.PolySynth(Tone.Synth,{volume:-10}).toDestination();
+      s.triggerAttackRelease(['C4','E4','G4'],'4n');
+      setTimeout(()=>s.triggerAttackRelease(['E4','G4','C5'],'4n'),300);
+      setTimeout(()=>s.triggerAttackRelease(['G4','C5','E5'],'2n'),600);
+      setTimeout(()=>s.dispose(),2000);
+    }
+  } catch(e) {}
+}
+
+// Hook SFX into game events
+const _origApplyResults = applyResults;
+// Wrap applyResults to play SFX
+function applyResultsWithSFX() {
+  const hadCorrect = state.kelompok.some(k=>k.alive && k.correct);
+  _origApplyResults();
+  if (hadCorrect) playSFX('correct'); else playSFX('wrong');
+}
+
+// Override startGame to play start SFX
+const _origStartGame = startGame;
+
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// GURU select PG (for display only)
+// ============================================================
+function guruSelectPG() {} // No-op for guru, just visual
+
+</script>
+</body>
+</html>
